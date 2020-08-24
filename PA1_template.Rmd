@@ -20,7 +20,7 @@ activity <- read.csv(unz("activity.zip", "activity.csv"))
 
 ## What is mean total number of steps taken per day?
 Total number of steps taken per day
-```{r totalsteps, echo=TRUE}
+```{r totalsteps, echo=TRUE, results='hide'}
 totalsteps <- aggregate(steps ~ date, data = activity, sum)
 hist(totalsteps$steps, xlab = "Total Steps Taken", ylab = "Number of Days", main = "The total number of steps taken each day", breaks = 8)
 ```
