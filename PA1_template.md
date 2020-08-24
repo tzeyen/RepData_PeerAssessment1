@@ -14,82 +14,101 @@ The variables included are:
 
 ## Loading and preprocessing the data
 Unzip and load data
-```{r loaddata, echo=TRUE}
+
+```r
 activity <- read.csv(unz("activity.zip", "activity.csv"))
 ```
 
 ## What is mean total number of steps taken per day?
 Total number of steps taken per day
-```{r totalsteps, echo=TRUE}
+
+```r
 totalsteps <- aggregate(steps ~ date, data = activity, sum)
 hist(totalsteps$steps, xlab = "Total Steps Taken", ylab = "Number of Days", main = "The total number of steps taken each day", breaks = 8)
 ```
 
+![](PA1_template_files/figure-html/totalsteps-1.png)<!-- -->
+
 The mean and median of the total number of steps taken per day
-```{r meanmedian, echo=TRUE}
+
+```r
 meansteps <- mean(totalsteps$steps)
 mediansteps <- median(totalsteps$steps)
 ```
 
-The mean of the total number of steps taken per day is `r meansteps`.  
-The median of the total number of steps taken per day is `r mediansteps`.
+The mean of the total number of steps taken per day is 1.0766189\times 10^{4}.  
+The median of the total number of steps taken per day is 10765.
 
 ## What is the average daily activity pattern?
 Time series plot of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
-```{r timeseriesplot, echo=TRUE}
+
+```r
 stepsinterval <- aggregate(steps ~ interval, data = activity, mean)
 plot(stepsinterval$interval, stepsinterval$steps, type = "l", xlab = "5-minute interval", ylab = "Average number of steps taken", main = "Average number of steps taken across all days")
 ```
 
+![](PA1_template_files/figure-html/timeseriesplot-1.png)<!-- -->
+
 Maximum number of steps
-```{r maximum, echo=TRUE}
+
+```r
 maximum <- stepsinterval$interval[which.max(stepsinterval$steps)]
 ```
 
-The maximum number of steps occurs at the `r maximum`th interval.
+The maximum number of steps occurs at the 835th interval.
 
 ## Imputing missing values
 The total number of missing values
-```{r missingvalue, echo=TRUE}
+
+```r
 missing <- nrow(activity[is.na(activity$steps),])
 ```
 
-The total number of missing values in the dataset is `r missing`.
+The total number of missing values in the dataset is 2304.
 
 Filling in all of the missing values by letting NA values be zeros and create a new dataset
-```{r fill, echo=TRUE}
+
+```r
 activitynoNA <- activity
 activitynoNA[is.na(activitynoNA$steps), "steps"] <- 0
 ```
 
 The histogram of the total number of steps taken each day
-```{r histogram, echo=TRUE}
+
+```r
 totalstepsnoNA <- aggregate(steps ~ date, data = activitynoNA, sum)
 hist(totalstepsnoNA$steps, xlab = "Total Steps Taken", ylab = "Number of Days", main = "The total number of steps taken each day", breaks = 8)
 ```
 
+![](PA1_template_files/figure-html/histogram-1.png)<!-- -->
+
 The mean and median of the total number of steps taken per day
-```{r meanmediannoNA, echo=TRUE}
+
+```r
 meanstepsnoNA <- mean(totalstepsnoNA$steps)
 medianstepsnoNA <- median(totalstepsnoNA$steps)
 ```
 
-The mean of the total number of steps taken per day is `r meanstepsnoNA`.  
-The median of the total number of steps taken per day is `r medianstepsnoNA`.  
+The mean of the total number of steps taken per day is 9354.2295082.  
+The median of the total number of steps taken per day is 1.0395\times 10^{4}.  
 
 The mean and median values differ from the estimates from the first part of the assignment. Imputing missing data on the estimate of the total daily number of steps resulted a left shift to zero and affected the mean and median values.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 Create a new factor variable in the dataset with two levels: weekdays and weekend
-```{r newfac, echo=TRUE}
+
+```r
 activitynoNA$day <- ifelse(as.POSIXlt(as.Date(activitynoNA$date))$wday%%6 == 0, "weekend", "weekday")
 activitynoNA$day <- factor(activitynoNA$day, levels = c("weekday", "weekend"))
 ```
 
 Panel plot of the 5-minute interval(x-axis) and the average number of steps taken, averaged across all weekday days or weekend days(y-axis)
-```{r panelplot, echo=TRUE}
+
+```r
 stepsintervalnoNA <- aggregate(steps ~ interval + day, data = activitynoNA, mean)
 library(lattice)
 xyplot(steps ~ interval | factor(day), data = stepsintervalnoNA, aspect = 1/2, type = "l", xlab = "5-minute interval", ylab = "Average number of steps taken", main = "Average number of steps taken across all days")
 ```
+
+![](PA1_template_files/figure-html/panelplot-1.png)<!-- -->
 
